@@ -1,5 +1,5 @@
-smartSpinner
-============
+Smart-Spinner
+=============
 
 Simple tool to create smart text spinner.
 
@@ -7,7 +7,8 @@ Helps to provide continous feedback of your application internal status withot
 flooding out console or logs.
 
 
-
+Index
+-----
 
 <!-- vim-markdown-toc GitLab -->
 
@@ -20,7 +21,7 @@ flooding out console or logs.
         * [demo()](#demo)
         * [list()](#list)
 * [Simple example](#simple-example)
-* [<a name="contributing"></a>Contributing](#a-namecontributingacontributing)
+* [Contributing](#contributing)
 
 <!-- vim-markdown-toc -->
 
@@ -51,7 +52,7 @@ Setup
 -----
 
 ```sh
-npm install --save smartspinner
+npm install --save smart-spinner
 ```
 
 Usage
@@ -150,8 +151,8 @@ setTimeout(()=>{
 ```
 
 
-<a name="contributing"></a>Contributing
----------------------------------------
+Contributing
+------------
 
 If you are interested in contributing with this project, you can do it in many ways:
 
