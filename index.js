@@ -13,7 +13,7 @@ const cliSpinners = require('cli-spinners');
 const tty = require('tty');
 
 
-function smartSpinner(cbk, spinners = ['dots']) {
+function smartSpinner(cbk, spinners = ['dots']) {//{{{
 
     var messageCbk;
 
@@ -28,6 +28,7 @@ function smartSpinner(cbk, spinners = ['dots']) {
         if (newCbk === false) { // Stopping operation
             clearInterval(next);
             stopped = true;
+            if (is_tty) process.stdout.write("\n");
         } else { // Message string/callback updating operation.
             messageCbk = ("function" == typeof newCbk)
                 ? newCbk
@@ -84,15 +85,13 @@ function smartSpinner(cbk, spinners = ['dots']) {
 
     return setMessage;
     
-};
+};//}}}
 
-
-
-function list() {
+function list() {//{{{
     const spinners = Object.keys(cliSpinners);
     console.log(spinners.length + ' spinners\n');
     spinners.map(sp=>console.log("  * "+sp));
-};
+};//}}}
 
 
 
