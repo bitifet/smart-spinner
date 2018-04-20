@@ -11,6 +11,32 @@
 const logUpdate = require('log-update');
 const cliSpinners = require('cli-spinners');
 const tty = require('tty');
+const hasUnicode = require('has-unicode')();
+const chalk = require("chalk");
+
+// Symbols and colors://{{{
+// ===================
+
+const symbols = {
+    ok: chalk.green(hasUnicode ? "✓" : "[Ok]"),
+    error: chalk.red(hasUnicode ? "✗" : "[Error]"),
+    arrow: chalk.yellow(hasUnicode ? "→" : "->"),
+};
+
+
+// Pre-colorize spinners:
+if (
+    // Terminal supports color:
+    'x' != chalk.yellow('x')
+) (function coloryzeSpinners(spinners){ // IIFE
+    for (let sp in spinners) {
+        for (let i in spinners[sp].frames) {
+            spinners[sp].frames[i] = chalk.yellow(spinners[sp].frames[i]);
+        };
+    };
+})(cliSpinners);
+
+// ===================//}}}
 
 
 function smartSpinner(cbk, spinners = ['dots']) {//{{{
@@ -23,24 +49,50 @@ function smartSpinner(cbk, spinners = ['dots']) {//{{{
     let next;
     let is_tty = tty.isatty(process.stdout.fd);
 
-    // Accept callback or literal string:
-    function setMessage(newCbk) {
-        if (newCbk === false) { // Stopping operation
-            clearInterval(next);
-            stopped = true;
-            if (is_tty) process.stdout.write("\n");
-        } else { // Message string/callback updating operation.
+
+    function showNextFrame () {//{{{
+        const frames = cliSpinners[spinners[spinner]].frames;
+        logUpdate(frames[frame++ % frames.length] + ' ' + messageCbk(true));
+    };//}}}
+
+    function ctrlAPI(stop, newCbk) {//{{{
+
+        // Make stop parameter optinal:
+        if ("boolean" != typeof stop) {
+            newCbk = stop;
+            stop = undefined;
+        };
+
+        // Message string/callback updating operation:
+        if (newCbk !== undefined) {
+            // Accept callback or literal string:
             messageCbk = ("function" == typeof newCbk)
                 ? newCbk
                 : ()=>newCbk
             ;
             if (! is_tty) {
-                console.log(messageCbk(false));
+                if (stop !== undefined) {
+                    stop || process.stdout.write("\n");
+                } else {
+                    console.log(symbols.arrow + ' ' + messageCbk(false));
+                };
             };
         };
-    };
 
-    setMessage(cbk);
+        // Handle Stopping operation:
+        if (stop !== undefined) {
+            clearInterval(next);
+            stopped = true;
+
+            let s = symbols[stop ? "ok" : "error"];
+            logUpdate(s + ' ' + messageCbk(true));
+
+            if (is_tty) process.stdout.write("\n");
+        }
+
+    };//}}}
+
+    ctrlAPI(cbk);
 
 
     if (is_tty) {
@@ -59,10 +111,6 @@ function smartSpinner(cbk, spinners = ['dots']) {//{{{
 
         };
 
-        const showNextFrame = () => {
-            const frames = cliSpinners[spinners[spinner]].frames;
-            logUpdate(frames[frame++ % frames.length] + ' ' + messageCbk(true));
-        };
 
         const showNextSpinner = () => {
             if (next) {
@@ -83,7 +131,7 @@ function smartSpinner(cbk, spinners = ['dots']) {//{{{
 
     };
 
-    return setMessage;
+    return ctrlAPI;
     
 };//}}}
 

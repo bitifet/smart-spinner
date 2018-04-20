@@ -3,8 +3,11 @@ Smart-Spinner
 
 Simple tool to create smart text spinner.
 
-Helps to provide continous feedback of your application internal status withot
+Helps to provide continous feedback of your application internal status without
 flooding out console or logs.
+
+
+![Small Gif Demo](media/smartSpinner-small-demo.gif)
 
 
 Index
@@ -21,6 +24,7 @@ Index
         * [demo()](#demo)
         * [list()](#list)
 * [Simple example](#simple-example)
+* [Demostration](#demostration)
 * [Contributing](#contributing)
 
 <!-- vim-markdown-toc -->
@@ -29,12 +33,19 @@ Index
 Features
 --------
 
-  * Provide continuous visual feedback thought
-    [cli-spinners](https://www.npmjs.com/package/cli-spinners).
+  * Provide continuous visual and colorful feedback thought
+    [cli-spinners](https://www.npmjs.com/package/cli-spinners) and
+    [chalk](https://www.npmjs.com/package/chalk).
+
+  * Helps to detect when you run into blocking code (spinning will pause while
+    long processing bloking code takes place).
 
   * Automatically detects when stdout is not connected to the terminal and just
     initial message (and updates if any) are shown to avoid flooding unattended
     operation logs.
+
+  * Also detects if terminal supports unicode and ansi color codes gracefully
+    failing back to textual / uncolorized (respectively) approaches.
 
   * Accepts message as string or callback function (so you can easlily monitor
     any variable you want).
@@ -42,7 +53,9 @@ Features
   * Returns simple API function that lets you:
     - Modify message anytime (even changing from string to callback and
         vice-versa) by passing new one.
-    - Stop spinner (finalization) by passing boolean false.
+    - Stop spinner (finalization) by passing boolean value indicating whether
+      the whole process finished correctly or not and, optionally, second
+      parameter with new message update.
 
 
 For better and easier understanding see [example](#simple-example) below.
@@ -71,7 +84,7 @@ const spinner = require("smart-spinner");
 var progress = spinner.create(<message> [, <spinner_list>]);
 ```
 
-where:
+**Where:**
 
   * **<message>:** Message string or callback to generate it. If callback is
     used, then it is called with single boolean argument indicating if output
@@ -87,6 +100,11 @@ where:
       [demo()](#demo) were used instead.
     - If string (distinct of "all" and "demo" is used) it wil be threated as
       single spinner list.
+
+
+**Return value:**
+
+
 
 
 ### Other functions
@@ -146,9 +164,23 @@ setTimeout(()=>{
 }, 6000);
 
 setTimeout(()=>{
-    progress(false);
+    progress(true);
+    // This will replace spinner icon with green check mark.
+    // Alternatively use `false` instead to show red cros symbol if something
+    // went wrong.
 }, 8000);
 ```
+
+>
+See more examples in the `examples` directory of the project repository.
+>
+
+
+Demostration
+------------
+
+![Full Gif Demo](media/smartSpinner-banner-demo.gif)
+
 
 
 Contributing
