@@ -26,5 +26,5 @@ setTimeout(()=>{
 }, 6000);
 
 setTimeout(()=>{
-    progress(false);
+    progress(true, "Job done!!");
 }, 8000);

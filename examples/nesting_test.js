@@ -26,10 +26,10 @@ setTimeout(()=>{
 }, 6000);
 
 setTimeout(()=>{
-    progress(false);
+    progress(true, "That's all!!");
     var p2 = spinner.create("Here is my Second Spinner", "all");
     setTimeout(()=>{
-        p2("Now text is updated");
+        p2("This will end with failing state (false)");
     }, 2000);
 
 
@@ -45,6 +45,6 @@ setTimeout(()=>{
         p2("I will finish just in 2 seconds more.");
     }, 6000);
     setTimeout(()=>{
-        p2(false);
+        p2(false, "Ooops!!!");
     },8000);
 }, 8000);
