@@ -89,12 +89,12 @@ var progress = spinner.create(<message> [, <spinner_list>]);
 
 **Where:**
 
-  * **<message>:** Message string or callback to generate it. If callback is
+  * `<message>`: Message string or callback to generate it. If callback is
     used, then it is called with single boolean argument indicating if output
     is actually connected to terminal or not. So complex calculations can be
     avoided if needed (also callback will be called single time in this case).
     
-  * **<spinner_list>** Array of spinner names (See [list()](#list) or
+  * `<spinner_list>`: Array of spinner names (See [list()](#list) or
     [demo()](#demo) to know which ones are available) or string "all" to use
     all.
     - Specified spinners will be rotated regularly.
@@ -105,8 +105,13 @@ var progress = spinner.create(<message> [, <spinner_list>]);
       single spinner list.
 
 
-**Return value:**
+**Return value:** Callback to control spinner:
 
+__Syntax:__
+
+  * `progress (String <newMsg>)`: Set message to provided string or callback.
+  * `progress (Boolean <stop>)`: Stop spinning with success (stop = true) or failed (stop = false).
+  * `progress (Boolean <stop>, String <newMsg>)` Stop spinning but also updates message.
 
 
 
@@ -163,15 +168,24 @@ setTimeout(()=>{
 
 
 setTimeout(()=>{
-    progress("I will finish just in 2 seconds more.");
+    progress("I will finish just in a few seconds more.");
 }, 6000);
 
+
+// Finally: This random timeouts will race to impose its status.  Even not good
+// pattern to trigger both success and fail status this example shows how, if it
+// happens, the last will be silently ignored.
 setTimeout(()=>{
-    progress(true);
-    // This will replace spinner icon with green check mark.
-    // Alternatively use `false` instead to show red cros symbol if something
-    // went wrong.
-}, 8000);
+    progress(true, "Success!!");
+    // This will replace spinner icon with green check mark and set message to
+    // "Success!!".
+}, 7000 + Math.random()*3000);
+
+setTimeout(()=>{
+    progress(false, "Failed!!");
+    // This will replace spinner icon with red cross mark and set message to
+    // "Failed!!".
+}, 7000 + Math.random()*3000);
 ```
 
 >

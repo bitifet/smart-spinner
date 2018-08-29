@@ -25,6 +25,7 @@ setTimeout(()=>{
     progress("I will finish just in 2 seconds more.");
 }, 6000);
 
-setTimeout(()=>{
-    progress(true, "Job done!!");
-}, 8000);
+setTimeout(()=>Math.round(Math.random())
+    ?  progress(true, "Job done!!")
+    :  progress(false, "Error!!")
+, 8000);

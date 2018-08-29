@@ -57,6 +57,9 @@ function smartSpinner(cbk, spinners = ['dots']) {//{{{
 
     function ctrlAPI(stop, newCbk) {//{{{
 
+        // Ignore calls after spinning finished:
+        if (stopped) return false;
+
         // Make stop parameter optinal:
         if ("boolean" != typeof stop) {
             newCbk = stop;
@@ -89,6 +92,8 @@ function smartSpinner(cbk, spinners = ['dots']) {//{{{
 
             if (is_tty) process.stdout.write("\n");
         }
+
+        return true; // Success.
 
     };//}}}
 
