@@ -84,7 +84,7 @@ const spinner = require("smart-spinner");
 
 
 ```javascript
-var progress = spinner.create(<message> [, <spinner_list>]);
+var progress = spinner.create(<message> [, <spinner_list> [, <opts>]]);
 ```
 
 **Where:**
@@ -104,14 +104,27 @@ var progress = spinner.create(<message> [, <spinner_list>]);
     - If string (distinct of "all" and "demo" is used) it wil be threated as
       single spinner list.
 
+  * `<opts>`: Optional object with settings:
+    - `timestamp` (boolean|string): Prepend ISO-8601 timestamp to non-TTY
+      log lines. Use `'utc'` (or `true`) for UTC, `'local'` for local
+      timezone, or any IANA timezone string (e.g. `'America/New_York'`).
+      Default: none.
 
-**Return value:** Callback to control spinner:
 
-__Syntax:__
+**Return value:** Control API with the following methods:
+
+__Function call syntax:__
 
   * `progress (String <newMsg>)`: Set message to provided string or callback.
   * `progress (Boolean <stop>)`: Stop spinning with success (stop = true) or failed (stop = false).
   * `progress (Boolean <stop>, String <newMsg>)` Stop spinning but also updates message.
+
+__Method syntax:__
+
+  * `progress.update(String|Function <newMsg>)`: Replace the message callback
+    and immediately emit a new line in non-TTY mode (does nothing on
+    interactive terminals — the animation loop picks up the new callback
+    automatically).
 
 
 
