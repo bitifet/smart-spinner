@@ -39,7 +39,7 @@ if (
 // ===================//}}}
 
 
-function smartSpinner(cbk, spinners = ['dots']) {//{{{
+function smartSpinner(cbk, spinners = ['dots'], opts = {}) {//{{{
 
     var messageCbk;
 
@@ -49,6 +49,45 @@ function smartSpinner(cbk, spinners = ['dots']) {//{{{
     let next;
     let is_tty = tty.isatty(process.stdout.fd);
 
+    var tsEnabled = !!(opts && opts.timestamp);
+    var tsOpt = opts && opts.timestamp;
+    if (tsEnabled) {
+        if (tsOpt === true) tsOpt = 'utc';
+        if (typeof tsOpt !== 'string') tsOpt = 'utc';
+    };
+    function fmtTS() {
+        if (!tsEnabled) return '';
+        var now = new Date();
+        var s;
+        if (tsOpt === 'utc') {
+            s = now.toISOString().replace(/\.\d+Z$/, 'Z');
+        } else {
+            var dtfOpt = {
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', second: '2-digit',
+                hour12: false, timeZoneName: 'shortOffset'
+            };
+            if (tsOpt !== 'local') dtfOpt.timeZone = tsOpt;
+            var map = {};
+            Intl.DateTimeFormat('en-CA', dtfOpt).formatToParts(now).forEach(function(p) { map[p.type] = p.value; });
+            var tz = map.timeZoneName || 'Z';
+            if (tz === 'UTC') tz = 'Z';
+            else if (tz.slice(0, 3) === 'GMT') {
+                var off = tz.slice(3);
+                if (!off) { tz = 'Z'; }
+                else {
+                    var sign = off.charAt(0);
+                    var rest = off.slice(1);
+                    var parts = rest.split(':');
+                    var hh = parts[0].length < 2 ? '0' + parts[0] : parts[0];
+                    var mm = parts[1] ? (parts[1].length < 2 ? '0' + parts[1] : parts[1]) : '00';
+                    tz = sign + hh + ':' + mm;
+                };
+            };
+            s = map.year + '-' + map.month + '-' + map.day + 'T' + map.hour + ':' + map.minute + ':' + map.second + tz;
+        };
+        return '[' + s + '] ';
+    };
 
     function showNextFrame () {//{{{
         const frames = cliSpinners[spinners[spinner]].frames;
@@ -77,7 +116,7 @@ function smartSpinner(cbk, spinners = ['dots']) {//{{{
                 if (stop !== undefined) {
                     stop || process.stdout.write("\n");
                 } else {
-                    console.log(symbols.arrow + ' ' + messageCbk(false));
+                    console.log(fmtTS() + symbols.arrow + ' ' + messageCbk(false));
                 };
             };
         };
@@ -88,14 +127,24 @@ function smartSpinner(cbk, spinners = ['dots']) {//{{{
             stopped = true;
 
             let s = symbols[stop ? "ok" : "error"];
-            logUpdate(s + ' ' + messageCbk(true));
-
-            if (is_tty) process.stdout.write("\n");
+            if (is_tty) {
+                logUpdate(s + ' ' + messageCbk(true));
+                process.stdout.write("\n");
+            } else {
+                console.log(fmtTS() + s + ' ' + messageCbk(true));
+            };
         }
 
         return true; // Success.
 
     };//}}}
+
+    ctrlAPI.update = function (newCbk) {
+        messageCbk = ("function" == typeof newCbk) ? newCbk : ()=>newCbk;
+        if (!is_tty) {
+            console.log(fmtTS() + symbols.arrow + ' ' + messageCbk(false));
+        };
+    };
 
     ctrlAPI(cbk);
 
