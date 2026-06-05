@@ -39,7 +39,14 @@ if (
 // ===================//}}}
 
 
-function smartSpinner(cbk, spinners = ['dots'], opts = {}) {//{{{
+function smartSpinner(cbk, opts = {}) {//{{{
+
+    // Backward compat: if opts is a string or array, treat as spinner list:
+    if (typeof opts === 'string' || Array.isArray(opts)) {
+        opts = { spinners: opts };
+    };
+
+    var spinners = opts.spinners !== undefined ? opts.spinners : ['dots'];
 
     var messageCbk;
 

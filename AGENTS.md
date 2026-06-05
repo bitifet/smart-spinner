@@ -9,7 +9,7 @@ Single-file npm package (`index.js`). No build, no tests, no CI.
 
 ## Key architecture
 
-- `spinner.create(msg, spinners, opts)` → returns `ctrlAPI(stopOrMsg, newMsg?)` — overloaded: pass a `boolean` to stop, a `string`/`function` to update the message, or both. Also has `ctrlAPI.update(newMsg)` for non-TTY phase transitions.
+- `spinner.create(msg, opts)` → returns `ctrlAPI(stopOrMsg, newMsg?)` — `opts` is an options object (`{ spinners, timestamp }`). For backward compat, a string/array is accepted as shorthand for `{ spinners: value }`. The returned API is overloaded: pass a `boolean` to stop, a `string`/`function` to update the message, or both. Also has `ctrlAPI.update(newMsg)` for non-TTY phase transitions.
 - `opts.timestamp` (`'utc'`, `'local'`, or IANA timezone) prepends ISO-8601 timestamps to non-TTY log lines.
 - Non-TTY detection (`tty.isatty`) silences animation; only the initial message + updates are `console.log`-ed once.
 - `has-unicode` / `chalk` graceful fallback for non-Unicode / no-color terminals.

@@ -84,7 +84,7 @@ const spinner = require("smart-spinner");
 
 
 ```javascript
-var progress = spinner.create(<message> [, <spinner_list> [, <opts>]]);
+var progress = spinner.create(<message> [, <opts>]);
 ```
 
 **Where:**
@@ -94,21 +94,21 @@ var progress = spinner.create(<message> [, <spinner_list> [, <opts>]]);
     is actually connected to terminal or not. So complex calculations can be
     avoided if needed (also callback will be called single time in this case).
     
-  * `<spinner_list>`: Array of spinner names (See [list()](#list) or
-    [demo()](#demo) to know which ones are available) or string "all" to use
-    all.
-    - Specified spinners will be rotated regularly.
-    - If "all" keyword is specified instead, all available ones will be used.
-    - If "demo" keyword is specified instead, it will operate just like if
-      [demo()](#demo) were used instead.
-    - If string (distinct of "all" and "demo" is used) it wil be threated as
-      single spinner list.
+  * `<opts>`: Optional options object with the following properties:
 
-  * `<opts>`: Optional object with settings:
+    - `spinners` (string|Array): Spinner name or list of spinner names (See
+      [list()](#list) or [demo()](#demo) to know which ones are available).
+      Use `"all"` to rotate through all available spinners, or `"demo"` to
+      show spinner names as they rotate. Default: `['dots']`.
+
     - `timestamp` (boolean|string): Prepend ISO-8601 timestamp to non-TTY
       log lines. Use `'utc'` (or `true`) for UTC, `'local'` for local
       timezone, or any IANA timezone string (e.g. `'America/New_York'`).
       Default: none.
+
+> **Note:** For backward compatibility, the second parameter also accepts a
+> string or array directly as a shorthand for `{ spinners: <value> }`.
+> The old 3-argument form `create(msg, spinners, opts)` is deprecated.
 
 
 **Return value:** Control API with the following methods:
